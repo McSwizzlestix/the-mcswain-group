@@ -15,6 +15,11 @@ jobs:
         with:
           node-version: '16.x'
 
+      - name: Set Git author identity
+        run: |
+          git config --global user.email "nickm@loadtoadnetworks.com"
+          git config --global user.name "McSwizzlestix"
+
       - name: Check out code
         uses: actions/checkout@v2
 
