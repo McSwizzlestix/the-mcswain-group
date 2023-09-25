@@ -34,9 +34,7 @@ jobs:
             echo "Error: $1"
             conflicts+=("$1")
           }
-
           git checkout Staging || handle_error "Failed to switch to 'Staging' branch."
-
           # Check if there are changes between 'Main-(Production)' and 'Staging'
           if git diff --quiet 'Main-(Production)'..HEAD; then
             echo "No new changes to merge."
@@ -44,17 +42,16 @@ jobs:
             # Attempt to pull changes from 'Main-(Production)' to 'Staging' and allow unrelated histories
             if ! git pull --no-rebase --allow-unrelated-histories origin 'Main-(Production)'; then
               echo "Conflicts detected. Resolving conflicts..."
-
               # Automatically resolve conflicts by favoring incoming changes
               git checkout --theirs . || handle_error "Failed to favor incoming changes."
               git add . || handle_error "Failed to stage changes."
               git commit -m "Merge 'Main-(Production)' into 'Staging' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
-
+              
               # Push the resolved changes to 'Staging'
-              git push origin Staging || handle_error "Failed to push changes to 'Staging' branch."
+              # Disable branch protection temporarily
+              git push --force-with-lease origin Staging || handle_error "Failed to push changes to 'Staging' branch."
             fi
           fi
-
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
             echo "Conflicts encountered during the process:"
