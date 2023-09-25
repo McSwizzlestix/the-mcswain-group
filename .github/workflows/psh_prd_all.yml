@@ -1,4 +1,4 @@
-name: Push Main to Development
+name: Push Main to Development with GPG signing
 
 on:
   push:
@@ -23,10 +23,18 @@ jobs:
           git config --global user.email "nickm@loadtoadnetworks.com"
           git config --global user.name "McSwizzleStix"
 
+      - name: Import GPG private key
+        run: echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
+
+      - name: Set up Git to use GPG signing
+        run: |
+          git config --global user.signingkey EF1FFA1C89ED7B43B6766E67D35AB1837D40E00B
+          git config --global commit.gpgsign true
+
       - name: Fetch latest changes
         run: git fetch --prune
 
-      - name: Push changes to branches
+      - name: Push changes to branches with GPG signing
         run: |
           # Initialize an array to store conflict information
           conflicts=()
@@ -48,9 +56,9 @@ jobs:
               # Automatically resolve conflicts by favoring incoming changes
               git checkout --theirs . || handle_error "Failed to favor incoming changes."
               git add . || handle_error "Failed to stage changes."
-              git commit -m "Merge 'Main-(Production)' into 'Development' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
+              git commit -S -m "Merge 'Main-(Production)' into 'Development' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
 
-              # Force push the resolved changes to 'Development'
+              # Force push the resolved changes to 'Development' with GPG signing
               git push --force origin Development || handle_error "Failed to force push changes to 'Development' branch."
             fi
           fi
