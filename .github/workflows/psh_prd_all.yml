@@ -1,4 +1,4 @@
-name: Push Main to Branches
+name: Push Main to Development
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - 'Main-(Production)'  # Trigger the workflow when changes are pushed to 'Main-(Production)'
 
 jobs:
-  push_to_branches:
+  push_to_development:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,24 +34,27 @@ jobs:
             echo "Error: $1"
             conflicts+=("$1")
           }
-          git checkout Staging || handle_error "Failed to switch to 'Staging' branch."
-          # Check if there are changes between 'Main-(Production)' and 'Staging'
+
+          git checkout Development || handle_error "Failed to switch to 'Development' branch."
+
+          # Check if there are changes between 'Main-(Production)' and 'Development'
           if git diff --quiet 'Main-(Production)'..HEAD; then
             echo "No new changes to merge."
           else
-            # Attempt to pull changes from 'Main-(Production)' to 'Staging' and allow unrelated histories
+            # Attempt to pull changes from 'Main-(Production)' to 'Development' and allow unrelated histories
             if ! git pull --no-rebase --allow-unrelated-histories origin 'Main-(Production)'; then
               echo "Conflicts detected. Resolving conflicts..."
+
               # Automatically resolve conflicts by favoring incoming changes
               git checkout --theirs . || handle_error "Failed to favor incoming changes."
               git add . || handle_error "Failed to stage changes."
-              git commit -m "Merge 'Main-(Production)' into 'Staging' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
-              
-              # Push the resolved changes to 'Staging'
-              # Disable branch protection temporarily
-              git push --force-with-lease origin Staging || handle_error "Failed to push changes to 'Staging' branch."
+              git commit -m "Merge 'Main-(Production)' into 'Development' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
+
+              # Push the resolved changes to 'Development'
+              git push origin Development || handle_error "Failed to push changes to 'Development' branch."
             fi
           fi
+
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
             echo "Conflicts encountered during the process:"
