@@ -18,6 +18,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
+      - name: Fetch latest changes
+        run: git fetch --prune
+
       - name: Push changes to branches
         run: |
           # Initialize an array to store conflict information
