@@ -1,0 +1,42 @@
+name: Push Main to Branches
+
+on:
+  push:
+    branches:
+      - Main-(Production)  # Trigger the workflow when changes are pushed to 'Main-(Production)'
+
+jobs:
+  push_to_branches:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Push changes to branches
+        run: |
+          # Initialize an array to store conflict information
+          conflicts=()
+
+          git checkout Staging || { handle_error "Failed to switch to 'Staging' branch."; }
+          git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
+          git push origin Staging || { handle_error "Failed to push changes to 'Staging' branch."; }
+
+          git checkout Testing || { handle_error "Failed to switch to 'Testing' branch."; }
+          git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
+          git push origin Testing || { handle_error "Failed to push changes to 'Testing' branch."; }
+
+          git checkout Development || { handle_error "Failed to switch to 'Development' branch."; }
+          git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
+          git push origin Development || { handle_error "Failed to push changes to 'Development' branch."; }
+
+          # Check for conflicts
+          if [ ${#conflicts[@]} -gt 0 ]; then
+              echo "Conflicts encountered during the process:"
+              for conflict in "${conflicts[@]}"; do
+                  echo "- $conflict"
+              done
+              exit 1  # Exit with an error code
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
