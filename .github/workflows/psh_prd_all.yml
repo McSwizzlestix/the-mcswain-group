@@ -1,4 +1,4 @@
-name: Push Main to Development with GPG signing (Rebase)
+name: Push Main to Development with GPG signing (Rebase and Force Push)
 
 on:
   push:
@@ -42,29 +42,16 @@ jobs:
       - name: Rebase 'Main-(Production)' onto 'Development'
         run: |
           git checkout Development || handle_error "Failed to switch to 'Development' branch."
-          git rebase 'Main-(Production)'
+          git fetch origin 'Main-(Production)':refs/remotes/origin/'Main-(Production)'
+          git rebase 'origin/Main-(Production)'
           git push --force origin Development || handle_error "Failed to force push changes to 'Development' branch."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Check for conflicts
         run: |
-          # Initialize an array to store conflict information
-          conflicts=()
-          handle_error() {
-            echo "Error: $1"
-            conflicts+=("$1")
-          }
           # Check if there are changes between 'Main-(Production)' and 'Development'
           if git diff --quiet 'Main-(Production)'..HEAD; then
             echo "No new changes to rebase."
-          fi
-          # Check for conflicts
-          if [ ${#conflicts[@]} -gt 0 ]; then
-            echo "Conflicts encountered during the rebase process:"
-            for conflict in "${conflicts[@]}"; do
-              echo "- $conflict"
-            done
-            exit 1  # Exit with an error code
           fi
         shell: bash
