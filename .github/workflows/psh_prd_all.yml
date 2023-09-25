@@ -22,10 +22,14 @@ jobs:
         run: |
           # Initialize an array to store conflict information
           conflicts=()
+          handle_error() {
+            echo "Error: $1"
+            conflicts+=("$1")
+          }
 
-          git checkout Staging || { handle_error "Failed to switch to 'Staging' branch."; }
-          git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
-          git push origin Staging || { handle_error "Failed to push changes to 'Staging' branch."; }
+          git checkout Staging || handle_error "Failed to switch to 'Staging' branch."
+          git pull origin Main-(Production) || handle_error "Failed to pull changes from 'Main-(Production)'."
+          git push origin Staging || handle_error "Failed to push changes to 'Staging' branch."
 
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
