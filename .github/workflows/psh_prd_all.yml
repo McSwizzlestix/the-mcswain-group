@@ -31,7 +31,7 @@ jobs:
 
       - name: Set up Git to use GPG signing
         run: |
-          git config --global user.signingkey EF1FFA1C89ED7B43B6766E67D35AB1837D40E00B
+          git config --global user.signingkey D35AB1837D40E00B
           git config --global commit.gpgsign true
 
       - name: Fetch latest changes
