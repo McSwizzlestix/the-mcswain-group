@@ -1,4 +1,4 @@
-name: Push Main to Development with GPG signing
+name: Push Main to Development with GPG signing (Rebase)
 
 on:
   push:
@@ -39,7 +39,15 @@ jobs:
       - name: Fetch latest changes
         run: git fetch --prune
 
-      - name: Push changes to branches with GPG signing
+      - name: Rebase 'Development' onto 'Main-(Production)'
+        run: |
+          git checkout Development || handle_error "Failed to switch to 'Development' branch."
+          git rebase 'Main-(Production)'
+          git push --force origin Development || handle_error "Failed to force push changes to 'Development' branch."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Check for conflicts
         run: |
           # Initialize an array to store conflict information
           conflicts=()
@@ -47,30 +55,16 @@ jobs:
             echo "Error: $1"
             conflicts+=("$1")
           }
-          git checkout Development || handle_error "Failed to switch to 'Development' branch."
           # Check if there are changes between 'Main-(Production)' and 'Development'
           if git diff --quiet 'Main-(Production)'..HEAD; then
-            echo "No new changes to merge."
-          else
-            # Attempt to pull changes from 'Main-(Production)' to 'Development' and allow unrelated histories
-            if ! git pull --no-rebase --allow-unrelated-histories origin 'Main-(Production)'; then
-              echo "Conflicts detected. Resolving conflicts..."
-              # Automatically resolve conflicts by favoring incoming changes
-              git checkout --theirs . || handle_error "Failed to favor incoming changes."
-              git add . || handle_error "Failed to stage changes."
-              git commit -m "Merge 'Main-(Production)' into 'Development' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
-              # Force push the resolved changes to 'Development' with GPG signing
-              git push --force origin Development || handle_error "Failed to force push changes to 'Development' branch."
-            fi
+            echo "No new changes to rebase."
           fi
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
-            echo "Conflicts encountered during the process:"
+            echo "Conflicts encountered during the rebase process:"
             for conflict in "${conflicts[@]}"; do
               echo "- $conflict"
             done
             exit 1  # Exit with an error code
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
