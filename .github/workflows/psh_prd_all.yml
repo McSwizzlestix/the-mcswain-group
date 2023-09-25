@@ -23,12 +23,12 @@ jobs:
           git config --global user.email "nickm@loadtoadnetworks.com"
           git config --global user.name "McSwizzleStix"
 
-- name: Import GPG private key and sign
-  run: |
-    echo "${{ secrets.GPG_PRIVATE_KEY }}" > gpg.key
-    gpg --batch --import gpg.key
-    rm gpg.key
-    echo "${{ secrets.GPG_PASSPHRASE }}" | gpg --batch --passphrase-fd 0 --pinentry-mode loopback --armor --detach-sign -o /tmp/signature.gpg 
+      - name: Import GPG private key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" > gpg.key
+          gpg --batch --import gpg.key
+          rm gpg.key
+          echo "${{ secrets.GPG_PASSPHRASE }}" | gpg --batch --passphrase-fd 0 --pinentry-mode loopback --armor --detach-sign -o /tmp/signature.gpg -
 
       - name: Set up Git to use GPG signing
         run: |
