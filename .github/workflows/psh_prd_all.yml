@@ -39,7 +39,7 @@ jobs:
       - name: Fetch latest changes
         run: git fetch --prune
 
-      - name: Rebase 'Development' onto 'Main-(Production)'
+      - name: Rebase 'Main-(Production)' onto 'Development'
         run: |
           git checkout Development || handle_error "Failed to switch to 'Development' branch."
           git rebase 'Main-(Production)'
