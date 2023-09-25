@@ -3,7 +3,7 @@ name: Push Main to Branches
 on:
   push:
     branches:
-      - Main-(Production)  # Trigger the workflow when changes are pushed to 'Main-(Production)'
+      - 'Main-(Production)'  # Trigger the workflow when changes are pushed to 'Main-(Production)'
 
 jobs:
   push_to_branches:
@@ -31,7 +31,7 @@ jobs:
           }
 
           git checkout Staging || handle_error "Failed to switch to 'Staging' branch."
-          git pull origin 'Main-(Production)' || handle_error "Failed to pull changes from 'Main-(Production)'."
+          git pull --no-rebase origin 'Main-(Production)' || handle_error "Failed to pull changes from 'Main-(Production)'."
           git push origin Staging || handle_error "Failed to push changes to 'Staging' branch."
 
           # Check for conflicts
