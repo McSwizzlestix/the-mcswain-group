@@ -4,3 +4,10 @@
 _notes/
 /bower_components/
 /node_modules/
+cgi-bin/
+lawncaredemo01/
+staging/
+php.ini
+.ftpquota
+.htaccess
+.user.ini
