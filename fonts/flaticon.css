@@ -1,0 +1,127 @@
+@charset "UTF-8";
+@font-face {
+  font-family: "flaticon_web_hostings";
+  src: url("./flaticon_web_hostings.ttf?fb1c00411b32988b5cb5b645db468cc5") format("truetype"), url("./flaticon_web_hostings.woff?fb1c00411b32988b5cb5b645db468cc5") format("woff"), url("./flaticon_web_hostings.woff2?fb1c00411b32988b5cb5b645db468cc5") format("woff2"), url("./flaticon_web_hostings.eot?fb1c00411b32988b5cb5b645db468cc5#iefix") format("embedded-opentype"), url("./flaticon_web_hostings.svg?fb1c00411b32988b5cb5b645db468cc5#flaticon_web_hostings") format("svg"); }
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+  font-family: flaticon_web_hostings !important;
+  font-style: normal;
+  font-weight: normal !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+.flaticon-001-loupe:before {
+  content: ""; }
+
+.flaticon-002-search-interface-symbol:before {
+  content: ""; }
+
+.flaticon-017-plus:before {
+  content: ""; }
+
+.flaticon-019-star:before {
+  content: ""; }
+
+.flaticon-020-x-mark:before {
+  content: ""; }
+
+.flaticon-027-click-1:before {
+  content: ""; }
+
+.flaticon-028-click-2:before {
+  content: ""; }
+
+.flaticon-029-money:before {
+  content: ""; }
+
+.flaticon-030-linux-platform:before {
+  content: ""; }
+
+.flaticon-031-uptime:before {
+  content: ""; }
+
+.flaticon-032-speedometer:before {
+  content: ""; }
+
+.flaticon-033-rush:before {
+  content: ""; }
+
+.flaticon-034-exchange:before {
+  content: ""; }
+
+.flaticon-035-right-arrow:before {
+  content: ""; }
+
+.flaticon-036-down:before {
+  content: ""; }
+
+.flaticon-037-down-arrow:before {
+  content: ""; }
+
+.flaticon-038-arrow-down-sign-to-navigate:before {
+  content: ""; }
+
+.flaticon-039-game-cube:before {
+  content: ""; }
+
+.flaticon-040-game-cube-1:before {
+  content: ""; }
+
+.flaticon-041-3d-cube:before {
+  content: ""; }
+
+.flaticon-042-cloud:before {
+  content: ""; }
+
+.flaticon-043-cloud-computing-1:before {
+  content: ""; }
+
+.flaticon-045-right-arrow-1:before {
+  content: ""; }
+
+.flaticon-052-discover:before {
+  content: ""; }
+
+.flaticon-053-option:before {
+  content: ""; }
+
+.flaticon-054-more:before {
+  content: ""; }
+
+.flaticon-055-menu:before {
+  content: ""; }
+
+.flaticon-065-scribble:before {
+  content: ""; }
+
+.flaticon-066-trainer:before {
+  content: ""; }
+
+.flaticon-070-instagram:before {
+  content: ""; }
+
+.flaticon-073-location-1:before {
+  content: ""; }
+
+.flaticon-074-check-mark:before {
+  content: ""; }
+
+.flaticon-075-phone-call:before {
+  content: ""; }
+
+.flaticon-076-cloud-computing-2:before {
+  content: ""; }
+
+.flaticon-077-cloud-database:before {
+  content: ""; }
+
+.flaticon-078-server-1:before {
+  content: ""; }
+
+.flaticon-079-medal:before {
+  content: ""; }
+
+.flaticon-080-control-panel:before {
+  content: ""; }
