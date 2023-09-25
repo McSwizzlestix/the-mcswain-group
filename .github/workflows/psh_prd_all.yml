@@ -22,14 +22,6 @@ jobs:
           git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
           git push origin Staging || { handle_error "Failed to push changes to 'Staging' branch."; }
 
-          git checkout Testing || { handle_error "Failed to switch to 'Testing' branch."; }
-          git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
-          git push origin Testing || { handle_error "Failed to push changes to 'Testing' branch."; }
-
-          git checkout Development || { handle_error "Failed to switch to 'Development' branch."; }
-          git pull origin Main-(Production) || { handle_error "Failed to pull changes from 'Main-(Production)'."; }
-          git push origin Development || { handle_error "Failed to push changes to 'Development' branch."; }
-
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
               echo "Conflicts encountered during the process:"
