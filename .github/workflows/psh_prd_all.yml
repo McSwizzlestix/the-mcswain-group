@@ -15,13 +15,13 @@ jobs:
         with:
           node-version: '16.x'
 
-      - name: Set Git author identity
-        run: |
-          git config --global user.email "nickm@loadtoadnetworks.com"
-          git config --global user.name "McSwizzlestix"
-
       - name: Check out code
         uses: actions/checkout@v2
+
+      - name: Configure Git global identity
+        run: |
+          git config --global user.email "nickm@loadtoadnetworks.com"
+          git config --global user.name "McSwizzleStix"
 
       - name: Fetch latest changes
         run: git fetch --prune
@@ -39,29 +39,29 @@ jobs:
 
           # Check if there are changes between 'Main-(Production)' and 'Staging'
           if git diff --quiet 'Main-(Production)'..HEAD; then
-              echo "No new changes to merge."
+            echo "No new changes to merge."
           else
-              # Attempt to pull changes from 'Main-(Production)' to 'Staging'
-              if ! git pull --no-rebase origin 'Main-(Production)'; then
-                  echo "Conflicts detected. Resolving conflicts..."
+            # Attempt to pull changes from 'Main-(Production)' to 'Staging' and allow unrelated histories
+            if ! git pull --no-rebase --allow-unrelated-histories origin 'Main-(Production)'; then
+              echo "Conflicts detected. Resolving conflicts..."
 
-                  # Automatically resolve conflicts by favoring incoming changes
-                  git checkout --theirs . || handle_error "Failed to favor incoming changes."
-                  git add . || handle_error "Failed to stage changes."
-                  git commit -m "Merge 'Main-(Production)' into 'Staging' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
+              # Automatically resolve conflicts by favoring incoming changes
+              git checkout --theirs . || handle_error "Failed to favor incoming changes."
+              git add . || handle_error "Failed to stage changes."
+              git commit -m "Merge 'Main-(Production)' into 'Staging' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
 
-                  # Push the resolved changes to 'Staging'
-                  git push origin Staging || handle_error "Failed to push changes to 'Staging' branch."
-              fi
+              # Push the resolved changes to 'Staging'
+              git push origin Staging || handle_error "Failed to push changes to 'Staging' branch."
+            fi
           fi
 
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
-              echo "Conflicts encountered during the process:"
-              for conflict in "${conflicts[@]}"; do
-                  echo "- $conflict"
-              done
-              exit 1  # Exit with an error code
+            echo "Conflicts encountered during the process:"
+            for conflict in "${conflicts[@]}"; do
+              echo "- $conflict"
+            done
+            exit 1  # Exit with an error code
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
