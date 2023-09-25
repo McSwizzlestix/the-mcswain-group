@@ -24,7 +24,10 @@ jobs:
           git config --global user.name "McSwizzleStix"
 
       - name: Import GPG private key
-        run: echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" > gpg.key
+          gpg --import gpg.key
+          rm gpg.key
 
       - name: Set up Git to use GPG signing
         run: |
