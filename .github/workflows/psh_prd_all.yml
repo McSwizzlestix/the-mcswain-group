@@ -26,7 +26,7 @@ jobs:
       - name: Fetch latest changes
         run: git fetch --prune
 
-      - name: Push changes to branches
+      - name: Rebase changes onto Development
         run: |
           # Initialize an array to store conflict information
           conflicts=()
@@ -41,7 +41,7 @@ jobs:
           if git diff --quiet 'Main-(Production)'..HEAD; then
             echo "No new changes to merge."
           else
-            # Attempt to pull changes from 'Main-(Production)' to 'Development' and allow unrelated histories
+            # Attempt to rebase changes from 'Main-(Production)' to 'Development' and allow unrelated histories
             if ! git pull --no-rebase --allow-unrelated-histories origin 'Main-(Production)'; then
               echo "Conflicts detected. Resolving conflicts..."
 
@@ -50,7 +50,7 @@ jobs:
               git add . || handle_error "Failed to stage changes."
               git commit -m "Merge 'Main-(Production)' into 'Development' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
 
-              # Push the resolved changes to 'Development'
+              # Push the rebased changes to 'Development'
               git push origin Development || handle_error "Failed to push changes to 'Development' branch."
             fi
           fi
