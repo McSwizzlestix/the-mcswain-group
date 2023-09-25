@@ -31,7 +31,7 @@ jobs:
           }
 
           git checkout Staging || handle_error "Failed to switch to 'Staging' branch."
-          git pull origin Main-(Production) || handle_error "Failed to pull changes from 'Main-(Production)'."
+          git pull origin 'Main-(Production)' || handle_error "Failed to pull changes from 'Main-(Production)'."
           git push origin Staging || handle_error "Failed to push changes to 'Staging' branch."
 
           # Check for conflicts
