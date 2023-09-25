@@ -22,18 +22,15 @@ jobs:
         run: |
           git config --global user.email "nickm@loadtoadnetworks.com"
           git config --global user.name "McSwizzleStix"
-
       - name: Import GPG private key
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" > gpg.key
-          gpg --import gpg.key
+          gpg --batch --import gpg.key
           rm gpg.key
-
       - name: Set up Git to use GPG signing
         run: |
           git config --global user.signingkey D35AB1837D40E00B
           git config --global commit.gpgsign true
-
       - name: Fetch latest changes
         run: git fetch --prune
 
@@ -45,9 +42,7 @@ jobs:
             echo "Error: $1"
             conflicts+=("$1")
           }
-
           git checkout Development || handle_error "Failed to switch to 'Development' branch."
-
           # Check if there are changes between 'Main-(Production)' and 'Development'
           if git diff --quiet 'Main-(Production)'..HEAD; then
             echo "No new changes to merge."
@@ -55,17 +50,14 @@ jobs:
             # Attempt to pull changes from 'Main-(Production)' to 'Development' and allow unrelated histories
             if ! git pull --no-rebase --allow-unrelated-histories origin 'Main-(Production)'; then
               echo "Conflicts detected. Resolving conflicts..."
-
               # Automatically resolve conflicts by favoring incoming changes
               git checkout --theirs . || handle_error "Failed to favor incoming changes."
               git add . || handle_error "Failed to stage changes."
               git commit -S -m "Merge 'Main-(Production)' into 'Development' (auto-resolved conflicts)" || handle_error "Failed to commit changes."
-
               # Force push the resolved changes to 'Development' with GPG signing
               git push --force origin Development || handle_error "Failed to force push changes to 'Development' branch."
             fi
           fi
-
           # Check for conflicts
           if [ ${#conflicts[@]} -gt 0 ]; then
             echo "Conflicts encountered during the process:"
