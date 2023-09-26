@@ -1,4 +1,4 @@
-name: Deploy Release Candidate to Latest Release
+# Deploy Release Candidate to Latest Release
 
 on:
   push:
@@ -33,29 +33,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set Git User Configurations
+        run: |
+          git config user.name "${{ secrets.GIT_COMMITTER_NAME }}"
+          git config user.email "${{ secrets.GIT_COMMITTER_EMAIL }}"
+        env:
+          GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMITTER_NAME }}
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
+
       - name: Set up GPG key
         run: |
           # Create a temporary directory for GPG key management
           mkdir -p ~/.gnupg
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d > ~/.gnupg/private_key.asc
           # Import the GPG private key
-          gpg --import ~/.gnupg/private_key.asc
+          if ! gpg --import ~/.gnupg/private_key.asc; then
+            echo "::error::Failed to import GPG private key."
+            exit 1
+          fi
           # Configure Git to use GPG for signing commits
-          git config --global user.signingkey D35AB1837D40E00B
+          git config --global user.signingkey ${{ secrets.GPG_KEY_ID }}
           git config --global commit.gpgsign true
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMITTER_NAME }}
-          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
-          GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
-          GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
 
       - name: Deploy to Latest Release
         run: |
           git checkout -B Latest-Release  # Create Latest-Release branch if it doesn't exist
           git merge --no-ff --no-commit ReleaseCandidate
           # Perform GPG signing (adjust the command as needed)
-          if ! git commit -S -m "Merge ReleaseCandidate into Latest-Release"; then
+          if ! git commit -S -m "Merge ReleaseCandidate into Latest-Release: Applied the Latest Dev Release Candidate to the Latest-Release (unstable) Branch"; then
             echo "::error::Failed to commit changes."
             exit 1
           fi
